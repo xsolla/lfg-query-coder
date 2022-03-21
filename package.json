@@ -1,20 +1,44 @@
 {
-  "name": "@lfg/query-coder",
-  "version": "0.0.1",
+  "name": "@lfgroup/query-coder",
   "description": "URL query coder-decoder",
-  "main": "dist/index.js",
-  "author": "Ivan Dorofeyev",
+  "version": "0.1.0",
   "license": "MIT",
+  "authors": [
+    {
+      "name": "Ivan Dorofeyev",
+      "email": "DivanDoesApps@gmail.com",
+      "url": "https://github.com/Betra"
+    }
+  ],
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "keywords": [
+    "query",
+    "querystring",
+    "query-parser"
+  ],
+  "files": [
+    "/dist"
+  ],
+  "repository": {
+    "type": "github",
+    "url": "https://github.com/LF-Group/query-coder"
+  },
+  "bugs": {
+    "email": "dev@lf.group",
+    "url": "https://github.com/LF-Group/query-coder/issues"
+  },
+  "homepage": "https://github.com/LF-Group/query-coder#readme",
   "scripts": {
     "build": "tsc --build",
-    "prepublish": "build"
+    "prepublish": "yarn build"
   },
   "devDependencies": {
-    "typescript": "^4.6.2",
-    "prettier": "^2.6.0",
-    "eslint": "^8.11.0",
     "@types/node": "^12.0.0",
     "@typescript-eslint/eslint-plugin": "^5.15.0",
-    "@typescript-eslint/parser": "^5.15.0"
+    "@typescript-eslint/parser": "^5.15.0",
+    "eslint": "^8.11.0",
+    "prettier": "^2.6.0",
+    "typescript": "^4.6.2"
   }
 }
