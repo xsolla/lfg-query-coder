@@ -41,9 +41,12 @@ const filters: SearchGroupsFilter = {
 };
 ```
 
-Which should result in `const query = "game=wow&mode=mplus&language=en&faction=alliance&dungeon=mots&rating=1400&region=eu"`.
-So we want to:
+Which should result in this:
+```ts
+const query = "game=wow&mode=mplus&language=en&faction=alliance&dungeon=mots&rating=1400&region=eu"
+```
 
+So we want to:
 - flatten nested filter object in a query string
 - rename certain keys (`gameMode` -> `mode`)
 - re-map certain values (`WorldOfWarcraft` -> `wow`)
