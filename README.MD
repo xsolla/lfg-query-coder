@@ -1,4 +1,4 @@
-## @lfg/query-coder
+## @lfgroup/query-coder
 
 URL query coder/decoder with configurable user pattern. It provides the most comfortable experience for encoding and decoding complex nested filter objects. [Check out example for more info](#example).
 
@@ -51,7 +51,7 @@ So we want to:
 With this lib, you can init `QueryCoder` and that's it! 🎉
 
 ```ts
-import { QueryCoder, QueryHandler } from "@lfg/query-coder";
+import { QueryCoder, QueryHandler, Type } from "@lfg/query-coder";
 
 // passing generic interface checks, whether node keys
 // are the same as in provided interface
