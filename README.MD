@@ -5,7 +5,7 @@ URL query coder/decoder with configurable user pattern. It provides the most com
 ### Installation
 
 ```zsh
-yarn add @lfg/query-coder
+yarn add @lfgroup/query-coder
 ```
 
 ### Basic Example
