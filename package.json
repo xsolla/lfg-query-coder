@@ -1,14 +1,11 @@
 {
   "name": "@lfgroup/query-coder",
+  "private": false,
   "description": "URL query coder-decoder",
   "version": "0.1.0",
   "license": "MIT",
   "authors": [
-    {
-      "name": "Ivan Dorofeyev",
-      "email": "DivanDoesApps@gmail.com",
-      "url": "https://github.com/Betra"
-    }
+    "Ivan <DivanDoesApps@gmail.com>"
   ],
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -20,10 +17,7 @@
   "files": [
     "/dist"
   ],
-  "repository": {
-    "type": "github",
-    "url": "https://github.com/LF-Group/query-coder"
-  },
+  "repository": "https://github.com/LF-Group/query-coder",
   "bugs": {
     "email": "dev@lf.group",
     "url": "https://github.com/LF-Group/query-coder/issues"
