@@ -1,3 +1,3 @@
-# URL query coder/decoder
+# @lfg/query-coder
 
-### @lfg/query-coder
+#### URL query coder/decoder
