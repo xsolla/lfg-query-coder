@@ -1,0 +1,11 @@
+{
+  "name": "@lfg/query-coder",
+  "version": "1.0.0",
+  "description": "URL query coder-decoder",
+  "main": "dist/index.js",
+  "author": "Ivan Dorofeyev",
+  "license": "MIT",
+  "devDependencies": {
+    "typescript": "^4.6.2"
+  }
+}
