@@ -1,11 +1,20 @@
 {
   "name": "@lfg/query-coder",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "URL query coder-decoder",
   "main": "dist/index.js",
   "author": "Ivan Dorofeyev",
   "license": "MIT",
+  "scripts": {
+    "build": "tsc --build",
+    "prepublish": "build"
+  },
   "devDependencies": {
-    "typescript": "^4.6.2"
+    "typescript": "^4.6.2",
+    "prettier": "^2.6.0",
+    "eslint": "^8.11.0",
+    "@types/node": "^12.0.0",
+    "@typescript-eslint/eslint-plugin": "^5.15.0",
+    "@typescript-eslint/parser": "^5.15.0"
   }
 }

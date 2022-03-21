@@ -6,9 +6,9 @@ export type QueryHandlerParams<T, P = undefined> = {
   decodeType?: Type;
 } & QueryHandlerTypedParams<T>;
 
-type QueryHandlerTypedParams<T> = T extends number | string | symbol
+export type QueryHandlerTypedParams<T> = T extends number | string | symbol
   ? {
-      convertMap?: Record<T, string>;
+      aliases?: Record<T, string>;
     }
   : void;
 

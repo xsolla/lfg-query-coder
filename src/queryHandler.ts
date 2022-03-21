@@ -52,12 +52,15 @@ export class QueryHandler<T, DC = undefined> {
   constructor(data: QueryHandlerParams<T, DC>) {
     this.query = data.query;
     this.decodeCondition = data.decodeCondition;
+    if (data.decodeType) {
+      this.type = data.decodeType;
+    }
 
     const strData = data as QueryHandlerTypedParams<string | number | symbol>;
-    if (strData?.convertMap) {
-      const convertMap = strData.convertMap as any;
-      this.aliases = convertMap;
-      this.reverseAliases = this.reverseMap(convertMap);
+    if (strData?.aliases) {
+      const aliases = strData.aliases as any;
+      this.aliases = aliases;
+      this.reverseAliases = this.reverseMap(aliases);
     }
   }
 
@@ -96,7 +99,7 @@ export class QueryHandler<T, DC = undefined> {
   }
 
   public setPath(path: string[]) {
-    return path.join(".");
+    this.path = path.join(".");
   }
 
   private isPrimitive(data: any): data is string | number | symbol {

@@ -1,9 +1,13 @@
 import { QueryHandler } from "./queryHandler";
+import { deepAssign } from "./helpers";
 import {
   DeepQueryCoder,
   DeepQueryCoderWithParent,
   QueryHandlerMap,
+  Type,
 } from "./types";
+
+export { QueryHandler, Type };
 
 /**
  * QueryCoders
@@ -42,7 +46,7 @@ export class QueryCoder<T> {
           acc[value.query] = [];
         }
         value.setPath([...path, keyStr]); // filter.wow.dungeon
-        acc[value.query].push(value);
+        acc[value.query].push(value as any);
 
         return acc;
       }
@@ -70,6 +74,7 @@ export class QueryCoder<T> {
   ): Record<string, string> {
     return Object.keys(data).reduce((acc, keyStr) => {
       const key = keyStr as keyof D;
+
       const value = data[key] as unknown;
       const shallowEncoder = encoder[key] as DeepQueryCoder<typeof value>;
 
@@ -97,7 +102,6 @@ export class QueryCoder<T> {
    */
   encode(data: T): string {
     const queryMap = this.deepEncode(data, this.queryEncoder);
-    console.log(queryMap);
     const urlQuery = new URLSearchParams(queryMap);
 
     return urlQuery.toString();
@@ -109,22 +113,22 @@ export class QueryCoder<T> {
    * @returns decoded object
    */
   decode(query: string): T {
-    "game=Wow&gameMode=WowMythicPlus&language=En&faction=Alliance&dungeon=MistsOfTirnaScithe&rating=1400&region=Europe";
     const searchParams = new URLSearchParams(query);
-    const params = Object.fromEntries([...(searchParams as any)]);
 
-    Object.keys(params).map((key) => {
-      const value = params[key];
+    const object = {};
+
+    for (const [key, value] of searchParams) {
       const handlers = this.queryHandlers[key];
       if (!handlers) {
-        return;
+        continue;
       }
+
       if (handlers.length === 1) {
         const handler = handlers[0];
         const parsedValue = handler.decode(value);
+        deepAssign(object, handler.path, parsedValue);
       }
-    });
-
-    return {} as T;
+    }
+    return object as T;
   }
 }

@@ -1,21 +1,24 @@
 ## @lfg/query-coder
+
 URL query coder/decoder with configurable user pattern. It provides the most comfortable experience for encoding and decoding complex nested filter objects. [Check out example for more info](#example).
 
-
 ### Installation
+
 ```zsh
 yarn add @lfg/query-coder
 ```
 
 ### Basic Example
+
 Imaging having a such interface for your querying filters:
+
 ```ts
 type SearchGroupsFilter = {
-  gameId?: 'WorldOfWarcraft' | 'WildRift' | 'LostArk';
+  gameId?: "WorldOfWarcraft" | "WildRift" | "LostArk";
   gameMode?: GameMode;
   from?: Date;
   language?: Language;
-  
+
   lostArk?: LostArkFilterInput;
   wildRift?: WildRiftFilterInput;
   wow?: WowFilterInput;
@@ -23,6 +26,7 @@ type SearchGroupsFilter = {
 ```
 
 Let's take 1 example of this:
+
 ```ts
 const filters: SearchGroupsFilter = {
   gameId: "WorldOfWarcraft",
@@ -35,22 +39,24 @@ const filters: SearchGroupsFilter = {
     region: WowRegion.Europe,
   },
 };
-
 ```
-Which should result in `const query = "game=wow&mode=mplus&language=en&faction=alliance&dungeon=mots&rating=1400&region=eu"`. 
-So we want to: 
-* flatten nested filter object in a query string  
-* rename certain keys (`gameMode` -> `mode`)
-* re-map certain values (`WorldOfWarcraft` -> `wow`)
+
+Which should result in `const query = "game=wow&mode=mplus&language=en&faction=alliance&dungeon=mots&rating=1400&region=eu"`.
+So we want to:
+
+- flatten nested filter object in a query string
+- rename certain keys (`gameMode` -> `mode`)
+- re-map certain values (`WorldOfWarcraft` -> `wow`)
 
 With this lib, you can init `QueryCoder` and that's it! 🎉
+
 ```ts
-import { QueryCoder, QueryHandler } from '@lfg/query-coder';
+import { QueryCoder, QueryHandler } from "@lfg/query-coder";
 
 // passing generic interface checks, whether node keys
 // are the same as in provided interface
 const query = new QueryCoder<SearchGroupsFilter>({
-  gameId: new QueryHandler({ 
+  gameId: new QueryHandler({
     query: "game",
     aliases: {
       WorldOfWarcraft: "wow",
@@ -61,7 +67,7 @@ const query = new QueryCoder<SearchGroupsFilter>({
   gameMode: new QueryHandler({ query: "mode" }),
   language: new QueryHandler({ query: "language" }),
   wow: {
-    faction: new QueryHandler({ 
+    faction: new QueryHandler({
       query: "faction",
       /**
        * decodeCondition is Partial of generic
@@ -82,7 +88,7 @@ const query = new QueryCoder<SearchGroupsFilter>({
        * You should provide a primitive type, which is different from string
        * Otherwise, url query "foo=313" can result in an unexpected result
        */
-      type: Type.Number,
+      decodeType: Type.Number,
     }),
     region: new QueryHandler({
       query: "region",
