@@ -1,6 +1,6 @@
 ## @lfgroup/query-coder
 
-URL query coder/decoder with configurable user pattern. It provides the most comfortable experience for encoding and decoding complex nested filter objects. [Check out example for more info](#example).
+URL query coder/decoder with configurable user pattern. It provides the most comfortable experience for encoding and decoding complex nested filter objects. [Check out example for more info](#basic-example).
 
 ### Installation
 
