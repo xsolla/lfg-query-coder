@@ -1,5 +1,5 @@
 import { QueryHandler } from "./queryHandler";
-import { deepAssign } from "./helpers";
+import { deepAssign, isObject, deepMatch } from "./helpers";
 import {
   DeepQueryCoder,
   DeepQueryCoderWithParent,
@@ -13,17 +13,12 @@ export { QueryHandler, Type };
  * QueryCoders
  */
 export class QueryCoder<T> {
-  private queryHandlers: QueryHandlerMap<T>;
-  private queryEncoder: DeepQueryCoder<T>;
+  public queryHandlers: QueryHandlerMap<T>;
+  public queryEncoder: DeepQueryCoder<T>;
 
   constructor(data: DeepQueryCoder<T>) {
     this.queryEncoder = data;
     this.queryHandlers = this.deepCollectHandlers(data);
-  }
-
-  /** Tests if given arg is an object */
-  private isObject(node: any): node is Record<any, any> {
-    return typeof node === "object" && node;
   }
 
   /** Flat maps all leaves from coder to find decoder fast */
@@ -36,7 +31,7 @@ export class QueryCoder<T> {
       const value = data[key as keyof D];
 
       /** Value must be either node or QueryHandler leaf */
-      if (!this.isObject(value)) {
+      if (!isObject(value)) {
         console.warn("shallow encoder unexpected type:", value);
         throw new Error("Unexpected type");
       }
@@ -83,7 +78,7 @@ export class QueryCoder<T> {
       }
 
       // if node, go deeper
-      if (this.isObject(value)) {
+      if (isObject(value)) {
         return { ...acc, ...this.deepEncode(value, shallowEncoder) };
       }
 
@@ -123,12 +118,19 @@ export class QueryCoder<T> {
         continue;
       }
 
-      if (handlers.length === 1) {
-        const handler = handlers[0];
-        const parsedValue = handler.decode(value);
-        deepAssign(object, handler.path, parsedValue);
+      const handler = handlers.find(
+        (handler) =>
+          !handler.decodeCondition || deepMatch(handler.decodeCondition, object)
+      );
+
+      if (!handler) {
+        continue;
       }
+
+      const parsedValue = handler.decode(value);
+      deepAssign(object, handler.path, parsedValue);
     }
+
     return object as T;
   }
 }
