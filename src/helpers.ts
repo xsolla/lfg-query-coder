@@ -22,3 +22,27 @@ export function deepAssign<T extends Record<any, any>>(
 
   return copyObj;
 }
+
+export function deepMatch(
+  sample: Record<any, any>,
+  obj: Record<any, any>
+): boolean {
+  return Object.keys(sample).every((key) => {
+    const sampleValue = sample[key];
+    const objValue = obj[key];
+
+    if ((sampleValue && !objValue) || typeof sampleValue !== typeof objValue) {
+      return false;
+    }
+
+    if (isObject(sampleValue)) {
+      return deepMatch(sampleValue, objValue);
+    }
+
+    return sampleValue === objValue;
+  });
+}
+
+export function isObject<T>(node: T): node is Record<any, any> {
+  return typeof node === "object" && Boolean(node);
+}
