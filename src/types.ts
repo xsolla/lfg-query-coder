@@ -1,9 +1,14 @@
 import { QueryHandler } from "./queryHandler";
 
+export interface DecodeOptions<T> {
+  defaultValue?: T;
+}
+
 export type QueryHandlerParams<T, P = undefined> = {
   query: string;
   decodeCondition?: P;
   decodeType?: Type;
+  encodable?: boolean;
 } & QueryHandlerTypedParams<T>;
 
 export type QueryHandlerTypedParams<T> = T extends number | string | symbol

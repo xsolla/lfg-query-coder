@@ -1,3 +1,6 @@
+import type { ParsedUrlQuery } from "querystring";
+
+import { isPrimitive } from "./helpers";
 import { Type, QueryHandlerParams, QueryHandlerTypedParams } from "./types";
 
 export class QueryHandler<T, DC = undefined> {
@@ -48,12 +51,20 @@ export class QueryHandler<T, DC = undefined> {
    * to do both encode and decode proccess faster
    */
   public reverseAliases?: Record<string, T>;
+  /**
+   * If false, js value won't be converted to query string
+   * @default true
+   */
+  public encodable = true;
 
   constructor(data: QueryHandlerParams<T, DC>) {
     this.query = data.query;
     this.decodeCondition = data.decodeCondition;
     if (data.decodeType) {
       this.type = data.decodeType;
+    }
+    if (data.encodable !== undefined) {
+      this.encodable = data.encodable;
     }
 
     const strData = data as QueryHandlerTypedParams<string | number | symbol>;
@@ -69,7 +80,7 @@ export class QueryHandler<T, DC = undefined> {
    * applies aliases if needed
    */
   public encode(data: T): string {
-    if (this.aliases && this.isPrimitive(data)) {
+    if (this.aliases && isPrimitive(data)) {
       const alias = this.aliases[data];
 
       return encodeURIComponent(alias || String(data));
@@ -98,16 +109,22 @@ export class QueryHandler<T, DC = undefined> {
     }
   }
 
-  public setPath(path: string[]) {
-    this.path = path.join(".");
+  public getFromQuery(query: string | ParsedUrlQuery): T | undefined {
+    const search = new URLSearchParams(query);
+
+    const data = search.get(this.query);
+    if (!data) {
+      return undefined;
+    }
+
+    return this.decode(data);
   }
 
-  private isPrimitive(data: any): data is string | number | symbol {
-    return (
-      typeof data === "string" ||
-      typeof data === "number" ||
-      typeof data === "symbol"
-    );
+  public setPath(path: string[]): void {
+    if (this.path) {
+      throw new Error(`Path already initialized for ${this.path}`);
+    }
+    this.path = path.join(".");
   }
 
   private reverseMap(

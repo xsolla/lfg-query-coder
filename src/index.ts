@@ -1,3 +1,5 @@
+import type { ParsedUrlQuery } from "querystring";
+
 import { QueryHandler } from "./queryHandler";
 import { deepAssign, isObject, deepMatch } from "./helpers";
 import {
@@ -5,6 +7,7 @@ import {
   DeepQueryCoderWithParent,
   QueryHandlerMap,
   Type,
+  DecodeOptions,
 } from "./types";
 
 export { QueryHandler, Type };
@@ -13,12 +16,19 @@ export { QueryHandler, Type };
  * QueryCoders
  */
 export class QueryCoder<T> {
-  public queryHandlers: QueryHandlerMap<T>;
-  public queryEncoder: DeepQueryCoder<T>;
+  /**
+   *
+   */
+  private queryHandlersMap: QueryHandlerMap<T>;
+  /**
+   * An object with the same structure as T,
+   * but with leaves of QueryHandlers
+   */
+  public handlers: DeepQueryCoder<T>;
 
   constructor(data: DeepQueryCoder<T>) {
-    this.queryEncoder = data;
-    this.queryHandlers = this.deepCollectHandlers(data);
+    this.handlers = data;
+    this.queryHandlersMap = this.deepCollectHandlers(data);
   }
 
   /** Flat maps all leaves from coder to find decoder fast */
@@ -73,7 +83,7 @@ export class QueryCoder<T> {
       const value = data[key] as unknown;
       const shallowEncoder = encoder[key] as DeepQueryCoder<typeof value>;
 
-      if (!shallowEncoder) {
+      if (!shallowEncoder || value === null || value === undefined) {
         return acc;
       }
 
@@ -87,6 +97,10 @@ export class QueryCoder<T> {
         throw new Error("Unexpected type");
       }
 
+      if (!shallowEncoder.encodable) {
+        return acc;
+      }
+
       return { ...acc, [shallowEncoder.query]: shallowEncoder.encode(value) };
     }, {} as Record<string, string>);
   }
@@ -95,11 +109,11 @@ export class QueryCoder<T> {
    * Encodes object to query string
    * @returns encoded query string
    */
-  encode(data: T): string {
-    const queryMap = this.deepEncode(data, this.queryEncoder);
+  encode(data: T): URLSearchParams {
+    const queryMap = this.deepEncode(data, this.handlers);
     const urlQuery = new URLSearchParams(queryMap);
 
-    return urlQuery.toString();
+    return urlQuery;
   }
 
   /**
@@ -107,13 +121,13 @@ export class QueryCoder<T> {
    * @param query
    * @returns decoded object
    */
-  decode(query: string): T {
+  decode(query: string | ParsedUrlQuery, options: DecodeOptions<T> = {}): T {
     const searchParams = new URLSearchParams(query);
 
-    const object = {};
+    const object = options?.defaultValue || {};
 
     for (const [key, value] of searchParams) {
-      const handlers = this.queryHandlers[key];
+      const handlers = this.queryHandlersMap[key];
       if (!handlers) {
         continue;
       }

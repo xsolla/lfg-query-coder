@@ -46,3 +46,11 @@ export function deepMatch(
 export function isObject<T>(node: T): node is Record<any, any> {
   return typeof node === "object" && Boolean(node);
 }
+
+export function isPrimitive(data: any): data is string | number | symbol {
+  return (
+    typeof data === "string" ||
+    typeof data === "number" ||
+    typeof data === "symbol"
+  );
+}

@@ -42,11 +42,14 @@ const filters: SearchGroupsFilter = {
 ```
 
 Which should result in this:
+
 ```ts
-const query = "game=wow&mode=mplus&language=en&faction=alliance&dungeon=mots&rating=1400&region=eu"
+const query =
+  "game=wow&mode=mplus&language=en&faction=alliance&dungeon=mots&rating=1400&region=eu";
 ```
 
 So we want to:
+
 - flatten nested filter object in a query string
 - rename certain keys (`gameMode` -> `mode`)
 - re-map certain values (`WorldOfWarcraft` -> `wow`)
@@ -100,6 +103,6 @@ const query = new QueryCoder<SearchGroupsFilter>({
   },
 });
 
-query.encode(filters); // should result in query variable
+query.encode(filters).toString(); // should result in query variable
 query.decode(query); // should result in filters variable
 ```
