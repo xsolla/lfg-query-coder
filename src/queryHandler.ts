@@ -3,7 +3,7 @@ import type { ParsedUrlQuery } from "querystring";
 import { isPrimitive } from "./helpers";
 import { Type, QueryHandlerParams, QueryHandlerTypedParams } from "./types";
 
-export class QueryHandler<T, DC = undefined> {
+export class QueryHandler<T, DC = Record<string, any>> {
   /**
    * Type is important to be set,
    * because query "123" provides unrecognized type by itself
@@ -75,6 +75,16 @@ export class QueryHandler<T, DC = undefined> {
     }
   }
 
+  public clone<P>(): QueryHandler<T, P> {
+    return new QueryHandler({
+      query: this.query,
+      decodeCondition: this.decodeCondition,
+      decodeType: this.type,
+      encodable: this.encodable,
+      ...(this.aliases && { aliases: this.aliases }),
+    } as QueryHandlerParams<T, P>);
+  }
+
   /**
    * Encodes data value to query,
    * applies aliases if needed
@@ -121,9 +131,9 @@ export class QueryHandler<T, DC = undefined> {
   }
 
   public setPath(path: string[]): void {
-    if (this.path) {
-      throw new Error(`Path already initialized for ${this.path}`);
-    }
+    // if (this.path) {
+    //   throw new Error(`Path already initialized for ${this.path}`);
+    // }
     this.path = path.join(".");
   }
 
