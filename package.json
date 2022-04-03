@@ -2,7 +2,7 @@
   "name": "@lfgroup/query-coder",
   "private": false,
   "description": "URL query coder-decoder",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "license": "MIT",
   "authors": [
     "Ivan <DivanDoesApps@gmail.com>"
