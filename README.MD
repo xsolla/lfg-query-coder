@@ -2,9 +2,8 @@
 
 URL query coder/decoder with configurable user pattern. It provides the most comfortable experience for encoding and decoding complex nested filter objects. [Check out example for more info](#usage).
 
-1. [Installation](#installation)
-2. [Basic Example](#basic-example)
-3. [Advanced example with comments](#advanced-example-with-comments)
+1. [Quickstart](#quickstart)
+3. [Advanced example](#advanced-example)
 4. [Usage](#usage)
     1. [`QueryCoder`](#1-querycoder)
         1. [Encoding and decoding](#encoding-and-decoding)
@@ -19,13 +18,12 @@ URL query coder/decoder with configurable user pattern. It provides the most com
         7. [Excluding values from encoding](#excluding-values-from-encoding)
 
 
-## Installation
+## Quickstart
 
 ```zsh
 yarn add @lfgroup/query-coder
 ```
 
-## Basic example
 Query coder is designed to repeat an interface of provided object with `QueryCoder`, only replacing tree leaves with parser instances — `QueryHandlers`.
 
 ```ts
@@ -33,7 +31,7 @@ WIP
 ```
 
 
-## Advanced example with comments
+## Advanced example
 ### WIP
 
 Imaging having a such interface for your querying filters:
