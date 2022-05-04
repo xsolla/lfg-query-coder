@@ -32,6 +32,7 @@ enum LostArkRegion {
 
 interface SearchGroupsFilter {
   gameId?: "WorldOfWarcraft" | "WildRift" | "LostArk";
+  tags?: string[];
   gameMode?: GameMode;
   from?: Date;
   language?: Language;
@@ -53,17 +54,18 @@ interface SearchGroupsFilter {
 const filters: SearchGroupsFilter = {
   language: Language.En,
   gameId: "LostArk",
+  tags: ["wow", "ewew", "rre add"],
   wow: {
     region: WowRegion.Europe,
-  },
-  lostArk: {
-    region: LostArkRegion.US,
   },
 };
 
 // passing generic interface checks, whether node keys
 // are the same as in provided interface
 const query = new QueryCoder<SearchGroupsFilter>({
+  tags: new QueryHandler({
+    query: "tags",
+  }),
   language: new QueryHandler({
     query: "lang",
     encodable: false,
@@ -81,7 +83,7 @@ const query = new QueryCoder<SearchGroupsFilter>({
     region: new QueryHandler({
       query: "region",
       decodeType: Type.Number,
-      decodeCondition: { gameId: "WorldOfWarcraft" },
+      decodeCondition: { gameId: "LostArk" },
     }),
   },
   lostArk: {
@@ -94,8 +96,28 @@ const query = new QueryCoder<SearchGroupsFilter>({
 
 const encodedQuery = query.encode(filters); // should result in query variable
 // const decodedFilters = query.decode(encodedQuery.toString()); // should result in filters variable
-const decodedFilters = query.decode(`game=la&region=1&lang=De`); // should result in filters variable
+const decodedFilters = query.decode(`game=wow&lang=De`); // should result in filters variable
 
 console.log(`Initial filters:\n`, filters);
 console.log(`Decoded filters:\n`, decodedFilters);
 console.log(`Query: `, encodedQuery.toString());
+
+console.log("2323 ", query.handlers.lostArk?.region?.encode(LostArkRegion.US));
+
+// import { QueryCoder, QueryHandler } from "@lfg/query-coder";
+
+interface ObjectToSerialize {
+  foo: string;
+  arr: string[];
+  bar: {
+    baz: string;
+  };
+}
+
+const coder = new QueryCoder<ObjectToSerialize>({
+  foo: new QueryHandler({ query: "foo_in_query" }),
+  arr: new QueryHandler({ query: "arr" }),
+  bar: {
+    baz: new QueryHandler({ query: "baz_in_query" }),
+  },
+});

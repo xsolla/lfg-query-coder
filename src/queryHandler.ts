@@ -1,7 +1,12 @@
 import type { ParsedUrlQuery } from "querystring";
 
 import { isPrimitive } from "./helpers";
-import { Type, QueryHandlerParams, QueryHandlerTypedParams } from "./types";
+import {
+  Type,
+  QueryHandlerParams,
+  QueryHandlerTypedParams,
+  DEFAULT_SEPARATOR,
+} from "./types";
 
 export class QueryHandler<T, DC = Record<string, any>> {
   /**
@@ -56,6 +61,12 @@ export class QueryHandler<T, DC = Record<string, any>> {
    * @default true
    */
   public encodable = true;
+  /**
+   * Separator value for encoding arrays
+   * Do not put default value in variable to show memory mercy
+   * @default ","
+   */
+  public separator = undefined;
 
   constructor(data: QueryHandlerParams<T, DC>) {
     this.query = data.query;
@@ -75,10 +86,10 @@ export class QueryHandler<T, DC = Record<string, any>> {
     }
   }
 
-  public clone<P>(): QueryHandler<T, P> {
+  public clone<P>(decodeCondition: P): QueryHandler<T, P> {
     return new QueryHandler({
       query: this.query,
-      decodeCondition: this.decodeCondition,
+      decodeCondition: decodeCondition,
       decodeType: this.type,
       encodable: this.encodable,
       ...(this.aliases && { aliases: this.aliases }),
@@ -94,6 +105,14 @@ export class QueryHandler<T, DC = Record<string, any>> {
       const alias = this.aliases[data];
 
       return encodeURIComponent(alias || String(data));
+    }
+
+    if (Array.isArray(data)) {
+      const serialized = data
+        .map(encodeURIComponent)
+        .join(this.separator || DEFAULT_SEPARATOR);
+
+      return serialized;
     }
 
     return encodeURIComponent(String(data));
@@ -116,6 +135,10 @@ export class QueryHandler<T, DC = Record<string, any>> {
         return Number(dataStr) as any;
       case Type.String:
         return dataStr as any;
+      case Type.Array:
+        const encodedArray = dataStr.split(this.separator || DEFAULT_SEPARATOR);
+
+        return encodedArray.map(decodeURIComponent) as any;
     }
   }
 
