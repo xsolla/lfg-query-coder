@@ -68,9 +68,15 @@ export class QueryHandler<T, DC = Record<string, any>> {
    */
   public separator = undefined;
 
+  public decodeEmptyValue = false;
+
   constructor(data: QueryHandlerParams<T, DC>) {
     this.query = data.query;
     this.decodeCondition = data.decodeCondition;
+
+    if (data.decodeEmptyValue) {
+      this.decodeEmptyValue = data.decodeEmptyValue;
+    }
     if (data.decodeType) {
       this.type = data.decodeType;
     }
@@ -123,6 +129,11 @@ export class QueryHandler<T, DC = Record<string, any>> {
    */
   public decode(query: string): T {
     const dataStr = decodeURIComponent(query);
+
+    if (dataStr === "" && !this.decodeEmptyValue) {
+      return undefined as any;
+    }
+
     if (this.reverseAliases) {
       const alias = this.reverseAliases[dataStr];
 

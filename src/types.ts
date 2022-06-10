@@ -17,6 +17,7 @@ export type QueryHandlerParams<T, P = undefined> =
       decodeCondition?: P;
       decodeType?: Type;
       encodable?: boolean;
+      decodeEmptyValue?: boolean;
     } & (QueryHandlerTypedParams<T> | QueryHandlerArrayParams<T>);
 
 export type QueryHandlerTypedParams<T> = T extends number | string | symbol
