@@ -101,6 +101,10 @@ export class QueryCoder<T> {
         return acc;
       }
 
+      if (shallowEncoder.acceptEmptyValue && !value) {
+        return acc;
+      }
+
       return { ...acc, [shallowEncoder.query]: shallowEncoder.encode(value) };
     }, {} as Record<string, string>);
   }
@@ -109,11 +113,15 @@ export class QueryCoder<T> {
    * Encodes object to query string
    * @returns encoded query string
    */
-  encode(data: T): URLSearchParams {
+  encode(data: T): string {
     const queryMap = this.deepEncode(data, this.handlers);
-    const urlQuery = new URLSearchParams(queryMap);
+    const urlQuery = new URLSearchParams(queryMap).toString();
 
-    return urlQuery;
+    const trimmed = urlQuery.replaceAll("=&", "&");
+
+    return trimmed.endsWith("=")
+      ? trimmed.slice(0, trimmed.length - 2)
+      : trimmed;
   }
 
   /**

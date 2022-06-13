@@ -69,6 +69,7 @@ export class QueryHandler<T, DC = Record<string, any>> {
   public separator = undefined;
 
   public decodeEmptyValue = false;
+  public acceptEmptyValue = false;
 
   constructor(data: QueryHandlerParams<T, DC>) {
     this.query = data.query;
@@ -82,6 +83,13 @@ export class QueryHandler<T, DC = Record<string, any>> {
     }
     if (data.encodable !== undefined) {
       this.encodable = data.encodable;
+    }
+
+    if (data.decodeType === Type.Boolean) {
+      const boolData = data as QueryHandlerTypedParams<boolean>;
+      if (boolData.acceptEmptyValue) {
+        this.acceptEmptyValue = boolData.acceptEmptyValue;
+      }
     }
 
     const strData = data as QueryHandlerTypedParams<string | number | symbol>;
@@ -107,6 +115,10 @@ export class QueryHandler<T, DC = Record<string, any>> {
    * applies aliases if needed
    */
   public encode(data: T): string {
+    if (data && this.acceptEmptyValue) {
+      return "";
+    }
+
     if (this.aliases && isPrimitive(data)) {
       const alias = this.aliases[data];
 
@@ -130,7 +142,7 @@ export class QueryHandler<T, DC = Record<string, any>> {
   public decode(query: string): T {
     const dataStr = decodeURIComponent(query);
 
-    if (dataStr === "" && !this.decodeEmptyValue) {
+    if (dataStr === "" && !this.decodeEmptyValue && !this.acceptEmptyValue) {
       return undefined as any;
     }
 
@@ -141,6 +153,10 @@ export class QueryHandler<T, DC = Record<string, any>> {
     }
     switch (this.type) {
       case Type.Boolean:
+        if (this.acceptEmptyValue) {
+          return true as any;
+        }
+
         return Boolean(dataStr) as any;
       case Type.Number:
         return Number(dataStr) as any;
@@ -157,7 +173,7 @@ export class QueryHandler<T, DC = Record<string, any>> {
     const search = new URLSearchParams(query);
 
     const data = search.get(this.query);
-    if (!data) {
+    if (data === null) {
       return undefined;
     }
 

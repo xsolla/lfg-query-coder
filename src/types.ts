@@ -22,6 +22,8 @@ export type QueryHandlerParams<T, P = undefined> =
 
 export type QueryHandlerTypedParams<T> = T extends number | string | symbol
   ? { aliases?: Record<T, string> }
+  : T extends boolean
+  ? { acceptEmptyValue?: boolean }
   : void;
 
 export enum Type {

@@ -33,6 +33,7 @@ enum LostArkRegion {
 interface SearchGroupsFilter {
   gameId?: "WorldOfWarcraft" | "WildRift" | "LostArk";
   tags?: string[];
+  upcoming?: boolean;
   gameMode?: GameMode;
   from?: Date;
   language?: Language;
@@ -53,6 +54,7 @@ interface SearchGroupsFilter {
 
 const filters: SearchGroupsFilter = {
   language: Language.En,
+  upcoming: false,
   gameId: "LostArk",
   tags: ["wow", "ewew", "rre add"],
   wow: {
@@ -65,6 +67,12 @@ const filters: SearchGroupsFilter = {
 const query = new QueryCoder<SearchGroupsFilter>({
   tags: new QueryHandler({
     query: "tags",
+    decodeType: Type.Array,
+  }),
+  upcoming: new QueryHandler({
+    query: "upcoming",
+    decodeType: Type.Boolean,
+    acceptEmptyValue: true,
   }),
   language: new QueryHandler({
     query: "lang",
@@ -82,7 +90,6 @@ const query = new QueryCoder<SearchGroupsFilter>({
   wow: {
     region: new QueryHandler({
       query: "region",
-      decodeType: Type.Number,
       decodeCondition: { gameId: "LostArk" },
     }),
   },
@@ -96,11 +103,11 @@ const query = new QueryCoder<SearchGroupsFilter>({
 
 const encodedQuery = query.encode(filters); // should result in query variable
 // const decodedFilters = query.decode(encodedQuery.toString()); // should result in filters variable
-const decodedFilters = query.decode(`game=wow&lang=De`); // should result in filters variable
+const decodedFilters = query.decode(encodedQuery); // should result in filters variable
 
 console.log(`Initial filters:\n`, filters);
 console.log(`Decoded filters:\n`, decodedFilters);
-console.log(`Query: `, encodedQuery.toString());
+console.log(`Query: `, encodedQuery);
 
 console.log("2323 ", query.handlers.lostArk?.region?.encode(LostArkRegion.US));
 
