@@ -120,7 +120,7 @@ export class QueryCoder<T> {
     const trimmed = urlQuery.replaceAll("=&", "&");
 
     return trimmed.endsWith("=")
-      ? trimmed.slice(0, trimmed.length - 2)
+      ? trimmed.slice(0, trimmed.length - 1)
       : trimmed;
   }
 
