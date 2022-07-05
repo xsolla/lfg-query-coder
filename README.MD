@@ -1,5 +1,7 @@
 # @lfgroup/query-coder
 
+![minified + gzipped](https://badgen.net/bundlephobia/minzip/@lfgroup\/query-coder)
+
 URL query coder/decoder with configurable user pattern. It provides the most comfortable experience for encoding and decoding complex nested filter objects. [Check out example for more info](#usage).
 
 1. [Quickstart](#quickstart)
